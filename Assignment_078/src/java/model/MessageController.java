@@ -5,22 +5,19 @@
  */
 package model;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.enterprise.context.ApplicationScoped;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import java.sql.*;
 
 /**
  *
@@ -28,7 +25,7 @@ import javax.json.JsonObject;
  */
 public class MessageController {
 
-    private SimpleDateFormat sdf = new SimpleDateFormat();
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
     private List<Message> messages;
 
     public MessageController() {
@@ -74,7 +71,7 @@ public class MessageController {
             pstmt.setString(1, msg.getTitle());
             pstmt.setString(2, msg.getContents());
             pstmt.setString(3, msg.getAuthor());
-            pstmt.setDate(4, new Date(msg.getSentTime().getTime()));
+            pstmt.setDate(4, new java.sql.Date(msg.getSentTime().getTime()));
             if (msg.getId() > 0) {
                 pstmt.setInt(5, msg.getId());
             }
@@ -160,7 +157,7 @@ public class MessageController {
         try {
             msg.setSentTime(sdf.parse(timeSetting));
         } catch (ParseException ex) {
-            msg.setSentTime(new Date());
+           msg.setSentTime(new Date());
             Logger.getLogger(MessageController.class.getName()).log(Level.SEVERE, null, ex);
         }
         persistToDB(msg);
